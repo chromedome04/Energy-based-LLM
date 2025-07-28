@@ -9,7 +9,13 @@ from IPython.display import display
 nltk.download('gutenberg')
 tokenizer = RegexpTokenizer(r'\w+')
 
-PUNCT = set("`!@#$%^&*()_-+=[]|;:<>,.?/{\}")
+nltk.download('punkt_tab')
+nltk.download('punkt')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('averaged_perceptron_tagger_eng')
+
+PUNCT = set("\'`!@#$%^&*()_-+=[]|;:<>,.?/{\\}")
 
 def list_available_books() -> dict[str, str]:
     """
@@ -126,9 +132,9 @@ def clean_sents(sentences: str, min_sent_len: int,
                 continue
             if word in PUNCT:
                 continue
-            if PoS == 'NNP':
-                clean.append(word)
-                continue
+            # if PoS == 'NNP':
+            #     clean.append(word)
+            #     continue
             w = word.strip("_" + "".join(PUNCT)).lower()
             if not w:
                 continue
@@ -151,3 +157,15 @@ def get_vocabulary(cleaned_book: list[list[str]]) -> set[str]:
             vocab.add(w)
     vocab.add('GAP')
     return sorted(vocab)
+
+
+def get_sent_from_raw(filename: str):
+    
+    
+    raw = gutenberg.raw(filename)
+
+    sentences = sent_tokenize(raw)
+
+    tokenized = [re.findall(r"\b\w+(?:'\w+)?\b|[^\w\s]", sentence) for sentence in sentences]
+        
+    return tokenized
